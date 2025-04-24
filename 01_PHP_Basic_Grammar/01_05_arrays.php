@@ -166,3 +166,187 @@ $person = ['name' => 'Max', 'age' => 30];
 if (array_key_exists('age', $person)) {
     echo "Age is set" . PHP_EOL;
 }
+
+// -------------------------
+// Add / Remove Elements
+// -------------------------
+
+$scores = [30, 40, 50];
+
+array_unshift($scores, 10); // Add to beginning
+array_push($scores, 60);    // Add to end
+$scores[] = 70;             // Append using shorthand
+
+array_shift($scores);       // Remove from beginning
+array_pop($scores);         // Remove from end
+
+print_r($scores);
+
+// -------------------------
+// array_slice (non-destructive)
+// -------------------------
+
+$nums = [10, 20, 30, 40, 50];
+
+// array_slice(array, offset, length)
+// Extracts a portion of the array without modifying the original
+$cut = array_slice($nums, 2, 2); // [30, 40]
+print_r($cut);
+
+// -------------------------
+// array_splice (modifies the original)
+// -------------------------
+
+$nums = [10, 20, 30, 40];
+
+// array_splice(array, offset, length, replacement)
+// Removes 2 items starting from index 1 (20, 30)
+// Then inserts [99] in their place → modifies the original array
+array_splice($nums, 1, 2, [99]);
+print_r($nums); // [10, 99, 40]
+
+
+// -------------------------
+// Sorting and Random Selection
+// -------------------------
+
+$scores = [30, 10, 50, 40];
+
+// sort(): Sort by value (ascending), reindexes keys
+sort($scores);  // Result: [10, 30, 40, 50]
+
+// rsort(): Sort by value (descending), reindexes keys
+rsort($scores); // Result: [50, 40, 30, 10]
+
+// Use associative array for key-based sorting
+$scores = [
+  'alice' => 30,
+  'bob' => 50,
+  'charlie' => 40
+];
+
+// asort(): Sort by value ascending, preserves keys
+asort($scores); // ['alice' => 30, 'charlie' => 40, 'bob' => 50]
+
+// arsort(): Sort by value descending, preserves keys
+arsort($scores); // ['bob' => 50, 'charlie' => 40, 'alice' => 30]
+
+// ksort(): Sort by key ascending
+ksort($scores); // ['alice', 'bob', 'charlie']
+
+// krsort(): Sort by key descending
+krsort($scores); // ['charlie', 'bob', 'alice']
+
+// shuffle(): Randomize order (keys are reset)
+shuffle($scores); // ['charlie' => ..., ...]
+
+// array_rand(): Pick random key(s)
+$picked = array_rand($scores, 2); // Returns 2 random keys
+print_r($picked); // Example: ['bob', 'charlie']
+
+
+// -------------------------
+// Aggregation and Set Operations
+// -------------------------
+
+$scores = [10, 20, 30];
+
+// array_sum(array): Returns the sum of all values
+echo "Total: " . array_sum($scores) . PHP_EOL;
+
+// count(array): Returns the number of elements
+echo "Count: " . count($scores) . PHP_EOL;
+
+// Average = total / count
+echo "Average: " . (array_sum($scores) / count($scores)) . PHP_EOL;
+
+
+// Set operations
+$a = [1, 2, 3, 4];
+$b = [3, 4, 5];
+
+// array_unique(array): Removes duplicate values
+print_r(array_unique([1, 2, 2, 3])); // [1, 2, 3]
+
+// array_diff(array1, array2): Values in array1 not present in array2
+print_r(array_diff($a, $b)); // [1, 2]
+
+// array_intersect(array1, array2): Values common to both arrays
+print_r(array_intersect($a, $b)); // [3, 4]
+
+
+// -------------------------
+// Keys / Values / Search
+// -------------------------
+
+$scores = [
+    'mueller' => 80,
+    'schneider' => 70,
+    'fischer' => 60,
+];
+
+// array_keys(array): Get all keys from the array
+print_r(array_keys($scores));   // ['mueller', 'schneider', 'fischer']
+
+// array_values(array): Get all values from the array
+print_r(array_values($scores)); // [80, 70, 60]
+
+// array_key_exists(key, array): Check if a specific key exists
+if (array_key_exists('mueller', $scores)) {
+    echo "mueller is here!" . PHP_EOL;
+}
+
+// in_array(value, array): Check if a specific value exists
+if (in_array(80, $scores)) {
+    echo "80 is here!" . PHP_EOL;
+}
+
+// array_search(value, array): Get the key for a given value
+echo array_search(70, $scores) . PHP_EOL; // Output: schneider
+
+  
+// -------------------------
+// usort
+// -------------------------
+
+$data = [
+    ['name' => 'mueller', 'score' => 80],
+    ['name' => 'schneider', 'score' => 60],
+    ['name' => 'fischer', 'score' => 70],
+    ['name' => 'meyer', 'score' => 60],
+];
+
+// usort(array, callback)
+// Sorts the array using a user-defined comparison function
+// <=> (spaceship operator): returns -1, 0, or 1
+usort($data, function($a, $b) {
+    return $a['score'] <=> $b['score'];
+});
+
+print_r($data);
+
+
+// -------------------------
+// array_multisort
+// -------------------------
+
+$data = [
+    ['name' => 'mueller', 'score' => 80],
+    ['name' => 'schneider', 'score' => 60],
+    ['name' => 'fischer', 'score' => 70],
+    ['name' => 'meyer', 'score' => 60],
+];
+
+// Extract the columns to use as sort criteria
+$scores = array_column($data, 'score');
+$names = array_column($data, 'name');
+
+// array_multisort(column1, direction1, column2, direction2, target array)
+// Sort by score ASC, then by name ASC (if scores are equal)
+array_multisort(
+    $scores, SORT_ASC, SORT_NUMERIC,
+    $names, SORT_ASC, SORT_STRING,
+    $data
+);
+
+print_r($data);
